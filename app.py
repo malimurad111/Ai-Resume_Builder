@@ -6,8 +6,8 @@ from fpdf import FPDF
 # Configure Gemini AI
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-st.set_page_config(page_title="Premium AI Resume Builder", layout="wide")
-st.title("📝 Premium AI Resume Builder (Gemini AI)")
+st.set_page_config(page_title="Premium Entry-Level AI Resume Builder", layout="wide")
+st.title("📝 Premium Entry-Level AI Resume Builder (Gemini AI)")
 
 # -------------------------------
 # Form Inputs
@@ -19,11 +19,23 @@ with st.form("resume_form"):
     linkedin = st.text_input("🔗 LinkedIn URL", "https://linkedin.com/in/alishahbaz")
     github = st.text_input("💻 GitHub URL", "https://github.com/alishahbaz")
     
-    skills = st.text_area("💡 Key Skills (comma separated)", "React.js, Next.js, Tailwind CSS, Bootstrap, JavaScript, HTML, Node.js, MySQL")
-    experience = st.text_area("💼 Work Experience (Quantifiable achievements)", "Built and maintained 5+ scalable web applications, improving client satisfaction by 20%. Collaborated with a team of 5 developers to deliver projects on time and under budget.")
-    education = st.text_area("🎓 Education", "BBIT, University Name, City – 2021")
-    projects = st.text_area("📂 Projects (Optional)", "File Fairy – Built a file management app using React.js and Firebase; Truck4u – E-commerce logistics platform using Next.js and Tailwind CSS")
-    certifications = st.text_area("🏆 Certifications / Awards (Optional)", "Stack360 – Full-Stack Web Development Certification – 2024")
+    skills = st.text_area("💡 Key Skills (comma separated)", "Python, Java, C++, JavaScript, Git, SQL, Agile methodologies")
+    experience = st.text_area(
+        "💼 Work Experience (Quantifiable achievements / Internships)", 
+        "Internship at XYZ Corp: Improved process efficiency by 15%. Collaborated with team to deliver project on time."
+    )
+    education = st.text_area(
+        "🎓 Education", 
+        "BBIT, University Name, City – 2024 | GPA: 3.6 | Relevant Coursework: Data Structures, Database Management, Software Engineering"
+    )
+    projects = st.text_area(
+        "📂 Projects (Optional)", 
+        "Project Name: Brief description, technologies used, key achievements. Include GitHub links if available."
+    )
+    certifications = st.text_area(
+        "🏆 Certifications / Awards (Optional)", 
+        "Certification Name, Issuing Organization, Date"
+    )
 
     submitted = st.form_submit_button("Generate Premium Resume")
 
@@ -37,9 +49,10 @@ if submitted:
         model = genai.GenerativeModel("gemini-1.5-flash")
 
         prompt = f"""
-Generate a **premium, professional, ATS-friendly resume** using the information below.
-- Use clean formatting, bullet points, action verbs, and concise paragraphs.
+Generate a **premium, professional, entry-level ATS-friendly resume** using the information below.
 - Replace any placeholders with realistic examples if left empty.
+- Use bold headings, bullet points, action verbs, and concise paragraphs.
+- Tailor for recent graduates or entry-level positions.
 
 Name: {full_name}
 Phone: {phone}
@@ -55,8 +68,8 @@ Certifications: {certifications}
 Structure the resume as:
 - Header / Contact Info
 - Professional Summary
-- Key Skills (categorize frontend, backend, databases, tools)
-- Work Experience (2-3 quantifiable achievements per job)
+- Key Skills
+- Work Experience
 - Education
 - Projects (Optional)
 - Certifications / Awards (Optional)
@@ -68,7 +81,7 @@ Structure the resume as:
             if response and response.text:
                 resume_text = response.text
 
-                st.subheader("📄 Generated Premium Resume")
+                st.subheader("📄 Generated Premium Entry-Level Resume")
                 st.write(resume_text)
 
                 # -------------------------------
@@ -80,14 +93,14 @@ Structure the resume as:
                 pdf.set_font("DejaVu", size=12)
                 pdf.multi_cell(0, 10, resume_text)
 
-                pdf_output = "premium_resume.pdf"
+                pdf_output = "premium_entry_level_resume.pdf"
                 pdf.output(pdf_output)
 
                 with open(pdf_output, "rb") as file:
                     st.download_button(
                         label="⬇️ Download Resume as PDF",
                         data=file,
-                        file_name="premium_resume.pdf",
+                        file_name="premium_entry_level_resume.pdf",
                         mime="application/pdf"
                     )
             else:
