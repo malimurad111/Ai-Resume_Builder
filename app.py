@@ -1,13 +1,11 @@
-
 import streamlit as st
 import os
 import google.generativeai as genai
 from fpdf import FPDF
 
-# Configure Gemini API
+# Configure Gemini AI
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-# Title
 st.set_page_config(page_title="Premium AI Resume Builder", layout="wide")
 st.title("📝 Premium AI Resume Builder (Gemini AI)")
 
@@ -15,17 +13,17 @@ st.title("📝 Premium AI Resume Builder (Gemini AI)")
 # Form Inputs
 # -------------------------------
 with st.form("resume_form"):
-    full_name = st.text_input("👤 Full Name")
-    phone = st.text_input("📞 Phone Number")
-    email = st.text_input("✉️ Email Address")
-    linkedin = st.text_input("🔗 LinkedIn URL (Optional)")
-    github = st.text_input("💻 GitHub URL (Optional)")
+    full_name = st.text_input("👤 Full Name", "Ali Shahbaz")
+    phone = st.text_input("📞 Phone Number", "03034055548")
+    email = st.text_input("✉️ Email Address", "m.alishahbaz01@gmail.com")
+    linkedin = st.text_input("🔗 LinkedIn URL", "https://linkedin.com/in/alishahbaz")
+    github = st.text_input("💻 GitHub URL", "https://github.com/alishahbaz")
     
-    skills = st.text_area("💡 Key Skills (comma separated)")
-    experience = st.text_area("💼 Work Experience (Quantifiable achievements preferred)")
-    education = st.text_area("🎓 Education")
-    projects = st.text_area("📂 Projects (Optional)")
-    certifications = st.text_area("🏆 Certifications / Awards (Optional)")
+    skills = st.text_area("💡 Key Skills (comma separated)", "React.js, Next.js, Tailwind CSS, Bootstrap, JavaScript, HTML, Node.js, MySQL")
+    experience = st.text_area("💼 Work Experience (Quantifiable achievements)", "Built and maintained 5+ scalable web applications, improving client satisfaction by 20%. Collaborated with a team of 5 developers to deliver projects on time and under budget.")
+    education = st.text_area("🎓 Education", "BBIT, University Name, City – 2021")
+    projects = st.text_area("📂 Projects (Optional)", "File Fairy – Built a file management app using React.js and Firebase; Truck4u – E-commerce logistics platform using Next.js and Tailwind CSS")
+    certifications = st.text_area("🏆 Certifications / Awards (Optional)", "Stack360 – Full-Stack Web Development Certification – 2024")
 
     submitted = st.form_submit_button("Generate Premium Resume")
 
@@ -39,8 +37,9 @@ if submitted:
         model = genai.GenerativeModel("gemini-1.5-flash")
 
         prompt = f"""
-Generate a premium, professional, ATS-friendly resume using the information below.
-Use **clean formatting, bullet points, action verbs, and concise paragraphs**.
+Generate a **premium, professional, ATS-friendly resume** using the information below.
+- Use clean formatting, bullet points, action verbs, and concise paragraphs.
+- Replace any placeholders with realistic examples if left empty.
 
 Name: {full_name}
 Phone: {phone}
@@ -53,11 +52,11 @@ Education: {education}
 Projects: {projects}
 Certifications: {certifications}
 
-Structure the resume with sections:
+Structure the resume as:
 - Header / Contact Info
 - Professional Summary
-- Key Skills (categorize if possible)
-- Work Experience (with 2-3 quantifiable achievements per job)
+- Key Skills (categorize frontend, backend, databases, tools)
+- Work Experience (2-3 quantifiable achievements per job)
 - Education
 - Projects (Optional)
 - Certifications / Awards (Optional)
@@ -77,7 +76,6 @@ Structure the resume with sections:
                 # -------------------------------
                 pdf = FPDF()
                 pdf.add_page()
-                # Add Unicode font (DejaVu)
                 pdf.add_font("DejaVu", "", fname="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", uni=True)
                 pdf.set_font("DejaVu", size=12)
                 pdf.multi_cell(0, 10, resume_text)
