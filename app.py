@@ -6,8 +6,8 @@ from fpdf import FPDF
 # Configure Gemini AI
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-st.set_page_config(page_title="Premium Entry-Level AI Resume Builder", layout="wide")
-st.title("📝 Premium Entry-Level AI Resume Builder (Gemini AI)")
+st.set_page_config(page_title="Entry-Level AI Resume Builder", layout="wide")
+st.title("📝 Entry-Level AI Resume Builder (Gemini AI)")
 
 # -------------------------------
 # Form Inputs
@@ -19,22 +19,25 @@ with st.form("resume_form"):
     linkedin = st.text_input("🔗 LinkedIn URL", "https://linkedin.com/in/alishahbaz")
     github = st.text_input("💻 GitHub URL", "https://github.com/alishahbaz")
     
-    skills = st.text_area("💡 Key Skills (comma separated)", "Python, Java, C++, JavaScript, Git, SQL, Agile methodologies")
+    skills = st.text_area(
+        "💡 Key Skills (comma separated)",
+        "Python, Java, C++, JavaScript, SQL, Git, Agile methodologies"
+    )
     experience = st.text_area(
-        "💼 Work Experience (Quantifiable achievements / Internships)", 
-        "Internship at XYZ Corp: Improved process efficiency by 15%. Collaborated with team to deliver project on time."
+        "💼 Work Experience / Internships (Quantifiable achievements)",
+        "XYZ Corp – Software Engineering Intern: Improved process efficiency by 15%. Collaborated with 4 developers to deliver a project on time and within budget."
     )
     education = st.text_area(
-        "🎓 Education", 
-        "BBIT, University Name, City – 2024 | GPA: 3.6 | Relevant Coursework: Data Structures, Database Management, Software Engineering"
+        "🎓 Education",
+        "BBIT, University Name, City – May 2024 | GPA: 3.6 | Relevant Coursework: Data Structures, Database Management, Software Engineering Principles, Web Development"
     )
     projects = st.text_area(
-        "📂 Projects (Optional)", 
-        "Project Name: Brief description, technologies used, key achievements. Include GitHub links if available."
+        "📂 Projects (Optional)",
+        "Project Name – GitHub Link: Brief description, technologies used, key achievements, quantifiable results."
     )
     certifications = st.text_area(
-        "🏆 Certifications / Awards (Optional)", 
-        "Certification Name, Issuing Organization, Date"
+        "🏆 Certifications / Awards (Optional)",
+        "Certification Name, Issuing Organization, Date (Optional)"
     )
 
     submitted = st.form_submit_button("Generate Premium Resume")
@@ -49,10 +52,10 @@ if submitted:
         model = genai.GenerativeModel("gemini-1.5-flash")
 
         prompt = f"""
-Generate a **premium, professional, entry-level ATS-friendly resume** using the information below.
+Generate a **premium, professional, entry-level, ATS-friendly resume** using the information below.
 - Replace any placeholders with realistic examples if left empty.
 - Use bold headings, bullet points, action verbs, and concise paragraphs.
-- Tailor for recent graduates or entry-level positions.
+- Tailored for recent graduates or entry-level positions.
 
 Name: {full_name}
 Phone: {phone}
