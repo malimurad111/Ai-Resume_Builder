@@ -1,42 +1,74 @@
 import streamlit as st
 import requests
-from fpdf import FPDF
 import os
+from fpdf import FPDF
 
-# HuggingFace API
-API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-base"
-API_KEY = os.environ.get("HUGGINGFACE_API_KEY")
-headers = {"Authorization": f"Bearer " + API_KEY}
+# -------------------------------
+# Title
+# -------------------------------
+st.title("📝 AI Resume Builder")
 
-def generate_resume_summary(text):
-    payload = {"inputs": f"Write a professional resume summary for: {text}"}
-    response = requests.post(API_URL, headers=headers, json=payload)
-    try:
-        return response.json()[0]["generated_text"]
-    except Exception as e:
-        return "Error generating summary. Please check API key or model."
+# -------------------------------
+# Form Inputs
+# -------------------------------
+with st.form("resume_form"):
+    full_name = st.text_input("👤 Full Name")
+    skills = st.text_area("💡 Skills (comma separated)")
+    experience = st.text_area("💼 Work Experience")
+    education = st.text_area("🎓 Education")
 
-# Streamlit UI
-st.title("AI Resume Builder ✨")
+    submitted = st.form_submit_button("Generate Resume")
 
-name = st.text_input("Full Name")
-skills = st.text_area("Skills (comma separated)")
-experience = st.text_area("Work Experience")
-education = st.text_area("Education")
+# -------------------------------
+# HuggingFace API Call
+# -------------------------------
+if submitted:
+    api_key = os.getenv("HUGGINGFACE_API_KEY")
+    if not api_key:
+        st.error("❌ HuggingFace API key not found. Please set it in Streamlit secrets.")
+    else:
+        headers = {"Authorization": f"Bearer {api_key}"}
 
-if st.button("Generate Resume"):
-    user_input = f"Name: {name}\nSkills: {skills}\nExperience: {experience}\nEducation: {education}"
-    summary = generate_resume_summary(user_input)
+        prompt = f"""
+        Create a professional resume for {full_name}.
 
-    st.subheader("AI Generated Resume Summary")
-    st.write(summary)
+        Skills: {skills}
 
-    # PDF Export
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.multi_cell(0, 10, f"Resume for {name}\n\nSummary:\n{summary}\n\nSkills:\n{skills}\n\nExperience:\n{experience}\n\nEducation:\n{education}")
-    pdf.output("resume.pdf")
+        Work Experience: {experience}
 
-    with open("resume.pdf", "rb") as f:
-        st.download_button("⬇️ Download Resume (PDF)", f, file_name="resume.pdf")
+        Education: {education}
+        """
+
+        response = requests.post(
+            "https://api-inference.huggingface.co/models/gpt2",
+            headers=headers,
+            json={"inputs": prompt, "max_length": 500}
+        )
+
+        if response.status_code == 200:
+            result = response.json()[0]['generated_text']
+
+            st.subheader("📄 Generated Resume")
+            st.write(result)
+
+            # -------------------------------
+            # PDF Export
+            # -------------------------------
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, result)
+
+            pdf_output = "resume.pdf"
+            pdf.output(pdf_output)
+
+            with open(pdf_output, "rb") as file:
+                st.download_button(
+                    label="⬇️ Download Resume as PDF",
+                    data=file,
+                    file_name="resume.pdf",
+                    mime="application/pdf"
+                )
+        else:
+            st.error("⚠️ API request failed. Try again.")
+
