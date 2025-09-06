@@ -4,6 +4,11 @@ import os
 from fpdf import FPDF
 
 # -------------------------------
+# HuggingFace API setup
+# -------------------------------
+API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+
+# -------------------------------
 # Title
 # -------------------------------
 st.title("📝 AI Resume Builder")
@@ -39,36 +44,40 @@ if submitted:
         Education: {education}
         """
 
-        response = requests.post(
-            "https://api-inference.huggingface.co/models/gpt2",
-            headers=headers,
-            json={"inputs": prompt, "max_length": 500}
-        )
+        try:
+            response = requests.post(
+                API_URL,
+                headers=headers,
+                json={"inputs": prompt, "max_length": 250}
+            )
 
-        if response.status_code == 200:
-            result = response.json()[0]['generated_text']
+            if response.status_code == 200:
+                result = response.json()[0]['summary_text']
 
-            st.subheader("📄 Generated Resume")
-            st.write(result)
+                st.subheader("📄 Generated Resume")
+                st.write(result)
 
-            # -------------------------------
-            # PDF Export
-            # -------------------------------
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font("Arial", size=12)
-            pdf.multi_cell(0, 10, result)
+                # -------------------------------
+                # PDF Export
+                # -------------------------------
+                pdf = FPDF()
+                pdf.add_page()
+                pdf.set_font("Arial", size=12)
+                pdf.multi_cell(0, 10, result)
 
-            pdf_output = "resume.pdf"
-            pdf.output(pdf_output)
+                pdf_output = "resume.pdf"
+                pdf.output(pdf_output)
 
-            with open(pdf_output, "rb") as file:
-                st.download_button(
-                    label="⬇️ Download Resume as PDF",
-                    data=file,
-                    file_name="resume.pdf",
-                    mime="application/pdf"
-                )
-        else:
-            st.error("⚠️ API request failed. Try again.")
+                with open(pdf_output, "rb") as file:
+                    st.download_button(
+                        label="⬇️ Download Resume as PDF",
+                        data=file,
+                        file_name="resume.pdf",
+                        mime="application/pdf"
+                    )
+            else:
+                st.error(f"⚠️ API failed: {response.status_code} - {response.text}")
+
+        except Exception as e:
+            st.error(f"❌ Error: {str(e)}")
 
