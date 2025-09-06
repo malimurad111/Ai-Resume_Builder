@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import google.generativeai as genai
-from fpdf import FPDF
+from fpdf import FPDF  # now using fpdf2
 
 # Configure Gemini API
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -49,10 +49,11 @@ if submitted:
             st.subheader("📄 Generated Resume")
             st.write(resume_text)
 
-            # Export to PDF
+            # ✅ Export to PDF with Unicode Support (fpdf2)
             pdf = FPDF()
             pdf.add_page()
-            pdf.set_font("Arial", size=12)
+            pdf.add_font("DejaVu", "", fname="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", uni=True)
+            pdf.set_font("DejaVu", size=12)
             pdf.multi_cell(0, 10, resume_text)
 
             pdf_output = "resume.pdf"
