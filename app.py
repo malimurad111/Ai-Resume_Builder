@@ -61,10 +61,11 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
                 pdf = FPDF()
                 pdf.add_page()
 
-                # Relative font path
-                font_path = os.path.join(os.getcwd(), "assets", "fonts", "DejaVuSans.ttf")
+                # Absolute Windows path for TTF font
+                font_path = r"C:\Users\malis\OneDrive\Desktop\resume-builder\assets\fonts\DejaVuSans.ttf"
+
                 if not os.path.isfile(font_path):
-                    st.error(f"❌ TTF font file not found:\n{font_path}\nPlease place DejaVuSans.ttf in this path.")
+                    st.error(f"❌ TTF font file not found:\n{font_path}")
                 else:
                     pdf.add_font("DejaVu", "", fname=font_path, uni=True)
                     pdf.set_font("DejaVu", size=12)
