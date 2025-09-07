@@ -54,14 +54,19 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
             resume_text = response.text if response and response.text else None
 
             if resume_text:
+                # ------------------ Replace special characters ------------------
+                safe_text = resume_text.replace("–", "-").replace("—", "-") \
+                                       .replace("“", '"').replace("”", '"') \
+                                       .replace("‘", "'").replace("’", "'")
+
                 st.subheader("📄 Generated Premium Entry-Level Resume")
-                st.text_area("Preview", resume_text, height=400)
+                st.text_area("Preview", safe_text, height=400)
 
                 # ------------------ PDF Export (TTF-Free) ------------------
                 pdf = FPDF()
                 pdf.add_page()
                 pdf.set_font("Arial", size=12)  # Default font, no TTF dependency
-                pdf.multi_cell(0, 10, resume_text)
+                pdf.multi_cell(0, 10, safe_text)
 
                 pdf_output = "premium_entry_level_resume.pdf"
                 pdf.output(pdf_output)
@@ -76,7 +81,7 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
 
                 # ------------------ Word Export ------------------
                 doc = Document()
-                for line in resume_text.split("\n"):
+                for line in safe_text.split("\n"):
                     doc.add_paragraph(line)
                 word_output = "premium_entry_level_resume.docx"
                 doc.save(word_output)
@@ -91,5 +96,6 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
 
             else:
                 st.error("⚠️ Resume generation failed. Try again.")
+
         except Exception as e:
             st.error(f"❌ Unexpected error: {str(e)}")
