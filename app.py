@@ -60,22 +60,25 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
                 pdf = FPDF()
                 pdf.add_page()
 
-                # Absolute path for DejaVuSans.ttf
+                # Font path check
                 font_path = os.path.join(os.getcwd(), "assets", "fonts", "DejaVuSans.ttf")
-                pdf.add_font("DejaVu", "", fname=font_path, uni=True)
-                pdf.set_font("DejaVu", size=12)
-                pdf.multi_cell(0, 10, resume_text)
+                if not os.path.isfile(font_path):
+                    st.error(f"❌ TTF font file not found: {font_path}\nPlease place DejaVuSans.ttf in this path.")
+                else:
+                    pdf.add_font("DejaVu", "", fname=font_path, uni=True)
+                    pdf.set_font("DejaVu", size=12)
+                    pdf.multi_cell(0, 10, resume_text)
 
-                pdf_output = "premium_entry_level_resume.pdf"
-                pdf.output(pdf_output)
+                    pdf_output = "premium_entry_level_resume.pdf"
+                    pdf.output(pdf_output)
 
-                with open(pdf_output, "rb") as file:
-                    st.download_button(
-                        "⬇️ Download Resume as PDF",
-                        file,
-                        file_name="premium_entry_level_resume.pdf",
-                        mime="application/pdf"
-                    )
+                    with open(pdf_output, "rb") as file:
+                        st.download_button(
+                            "⬇️ Download Resume as PDF",
+                            file,
+                            file_name="premium_entry_level_resume.pdf",
+                            mime="application/pdf"
+                        )
 
                 # ------------------ Word Export ------------------
                 doc = Document()
@@ -96,3 +99,4 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
                 st.error("⚠️ Resume generation failed. Try again.")
         except Exception as e:
             st.error(f"❌ Unexpected error: {str(e)}")
+
