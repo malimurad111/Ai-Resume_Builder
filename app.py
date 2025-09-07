@@ -34,6 +34,7 @@ if submitted:
         st.error("❌ Gemini API key not found.")
     else:
         try:
+            # Gemini AI model
             model = genai.GenerativeModel("gemini-1.5-flash")
             prompt = f"""
 Generate a **premium, professional, entry-level, ATS-friendly resume** using the information below.
@@ -60,10 +61,10 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
                 pdf = FPDF()
                 pdf.add_page()
 
-                # Font path check
+                # Relative font path
                 font_path = os.path.join(os.getcwd(), "assets", "fonts", "DejaVuSans.ttf")
                 if not os.path.isfile(font_path):
-                    st.error(f"❌ TTF font file not found: {font_path}\nPlease place DejaVuSans.ttf in this path.")
+                    st.error(f"❌ TTF font file not found:\n{font_path}\nPlease place DejaVuSans.ttf in this path.")
                 else:
                     pdf.add_font("DejaVu", "", fname=font_path, uni=True)
                     pdf.set_font("DejaVu", size=12)
@@ -99,4 +100,3 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
                 st.error("⚠️ Resume generation failed. Try again.")
         except Exception as e:
             st.error(f"❌ Unexpected error: {str(e)}")
-
