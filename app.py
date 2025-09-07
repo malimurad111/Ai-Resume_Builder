@@ -1,16 +1,30 @@
 import streamlit as st
 import os
-import google.generativeai as genai
 from fpdf import FPDF
+import google.generativeai as genai
 
+# -------------------------------
 # Configure Gemini AI
+# -------------------------------
+if not os.getenv("GEMINI_API_KEY"):
+    st.warning("⚠️ Set your Gemini API Key in Streamlit secrets to enable AI resume generation.")
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
+# -------------------------------
+# Streamlit Page Config
+# -------------------------------
 st.set_page_config(page_title="Entry-Level AI Resume Builder", layout="wide")
 st.title("📝 Entry-Level AI Resume Builder (Gemini AI)")
 
+st.markdown(
+    """
+Welcome! Fill in your details below and generate a **premium, ATS-friendly resume** instantly.
+Your resume will be professionally formatted and downloadable as a PDF.
+"""
+)
+
 # -------------------------------
-# Form Inputs
+# Resume Form Inputs
 # -------------------------------
 with st.form("resume_form"):
     full_name = st.text_input("👤 Full Name", "Ali Shahbaz")
@@ -47,13 +61,14 @@ with st.form("resume_form"):
 # -------------------------------
 if submitted:
     if not os.getenv("GEMINI_API_KEY"):
-        st.error("❌ Gemini API key not found. Set it in Streamlit secrets.")
+        st.error("❌ Gemini API key not found. Please set it in Streamlit secrets.")
     else:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        try:
+            model = genai.GenerativeModel("gemini-1.5-flash")
 
-        prompt = f"""
+            prompt = f"""
 Generate a **premium, professional, entry-level, ATS-friendly resume** using the information below.
-- Replace any placeholders with realistic examples if left empty.
+- Replace placeholders with realistic examples if left empty.
 - Use bold headings, bullet points, action verbs, and concise paragraphs.
 - Tailored for recent graduates or entry-level positions.
 
@@ -78,24 +93,22 @@ Structure the resume as:
 - Certifications / Awards (Optional)
 """
 
-        try:
             response = model.generate_content(prompt)
+            resume_text = response.text if response and response.text else None
 
-            if response and response.text:
-                resume_text = response.text
-
+            if resume_text:
                 st.subheader("📄 Generated Premium Entry-Level Resume")
-                st.write(resume_text)
+                st.text_area("Preview", resume_text, height=400)
 
                 # -------------------------------
-                # Export to PDF (Unicode + Premium)
+                # Export to PDF
                 # -------------------------------
                 pdf = FPDF()
                 pdf.add_page()
                 pdf.add_font("DejaVu", "", fname="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", uni=True)
                 pdf.set_font("DejaVu", size=12)
                 pdf.multi_cell(0, 10, resume_text)
-
+                
                 pdf_output = "premium_entry_level_resume.pdf"
                 pdf.output(pdf_output)
 
@@ -107,7 +120,7 @@ Structure the resume as:
                         mime="application/pdf"
                     )
             else:
-                st.error("⚠️ Resume generation failed. Try again.")
+                st.error("⚠️ Resume generation failed. Please try again or check your input.")
 
         except Exception as e:
-            st.error(f"❌ Error: {str(e)}")
+            st.error(f"❌ An unexpected error occurred: {str(e)}")
