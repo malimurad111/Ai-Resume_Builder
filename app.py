@@ -1,8 +1,8 @@
 import streamlit as st
-import os
 from fpdf import FPDF
 import google.generativeai as genai
 from docx import Document
+import os
 
 # ------------------ Gemini API ------------------
 if not os.getenv("GEMINI_API_KEY"):
@@ -57,30 +57,22 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
                 st.subheader("📄 Generated Premium Entry-Level Resume")
                 st.text_area("Preview", resume_text, height=400)
 
-                # ------------------ PDF Export ------------------
+                # ------------------ PDF Export (TTF-Free) ------------------
                 pdf = FPDF()
                 pdf.add_page()
+                pdf.set_font("Arial", size=12)  # Default font, no TTF dependency
+                pdf.multi_cell(0, 10, resume_text)
 
-                # Absolute Windows path for TTF font
-                font_path = r"D:\dejavu-fonts-ttf-2.37\dejavu-fonts-ttf-2.37\ttf\DejaVuSans.ttf"
+                pdf_output = "premium_entry_level_resume.pdf"
+                pdf.output(pdf_output)
 
-                if not os.path.isfile(font_path):
-                    st.error(f"❌ TTF font file not found:\n{font_path}\nPlease place DejaVuSans.ttf here.")
-                else:
-                    pdf.add_font("DejaVu", "", fname=font_path, uni=True)
-                    pdf.set_font("DejaVu", size=12)
-                    pdf.multi_cell(0, 10, resume_text)
-
-                    pdf_output = "premium_entry_level_resume.pdf"
-                    pdf.output(pdf_output)
-
-                    with open(pdf_output, "rb") as file:
-                        st.download_button(
-                            "⬇️ Download Resume as PDF",
-                            file,
-                            file_name="premium_entry_level_resume.pdf",
-                            mime="application/pdf"
-                        )
+                with open(pdf_output, "rb") as file:
+                    st.download_button(
+                        "⬇️ Download Resume as PDF",
+                        file,
+                        file_name="premium_entry_level_resume.pdf",
+                        mime="application/pdf"
+                    )
 
                 # ------------------ Word Export ------------------
                 doc = Document()
