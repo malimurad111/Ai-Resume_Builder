@@ -10,7 +10,7 @@ if not os.getenv("GEMINI_API_KEY"):
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 st.set_page_config(page_title="Entry-Level AI Resume Builder", layout="wide")
-st.title("📝 Entry-Level AI Resume Builder (Gemini AI)")
+st.title("📝 ResumeCraft AI")
 
 st.markdown("Fill your details below and generate a **premium, ATS-friendly resume** in PDF or Word!")
 
@@ -99,3 +99,4 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
 
         except Exception as e:
             st.error(f"❌ Unexpected error: {str(e)}")
+
