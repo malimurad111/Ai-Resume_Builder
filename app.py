@@ -61,8 +61,8 @@ Structure: Header, Professional Summary, Key Skills, Work Experience, Education,
                 pdf = FPDF()
                 pdf.add_page()
 
-                # Absolute Windows path for TTF font (D: drive)
-                font_path = r"D:\resume-builder\assets\fonts\DejaVuSans.ttf"
+                # Absolute Windows path for TTF font
+                font_path = r"D:\dejavu-fonts-ttf-2.37\dejavu-fonts-ttf-2.37\ttf\DejaVuSans.ttf"
 
                 if not os.path.isfile(font_path):
                     st.error(f"❌ TTF font file not found:\n{font_path}\nPlease place DejaVuSans.ttf here.")
